@@ -43,17 +43,26 @@ int main(void)
         }
         
         // PWM LED4 brightness
-        PWMperiod = 255;
-        while(PWMperiod != 0)
+        PWMperiod = 128;
+        
+        for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
         {
             if(TonLED4 == PWMperiod)
             {
                 LED4 = 1;
             }
-            PWMperiod --;
             __delay_us(20);
         }
         LED4 = 0;
+
+        if(PWMperiod == 128)
+        {
+            LED5 = 1;
+        }
+        else
+        {
+            LED5 = 0;
+        }
         
         // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
@@ -68,13 +77,22 @@ int main(void)
  * 1. The main part of the program contains the 'while(1)' loop. What condition
  *    is being evaluated within its brackets? (Hint: Think about the Boolean
  *    variables from Activity 2-Variables.) How many times will this loop run?
+
+ The condition that is being evaluated within its brackets is either if the LED4 brightness will increase or decrease. This will run as many times as the user would like it to run for.
+ However, it will restart and either decrease or increase as it hits the reset limit, which is the PWMperiod.
  * 
  * 2. There is a second 'while(PWMperiod != 0)' loop inside the first while
  *    loop. What condition is being evaluated inside this while statement's
  *    brackets? How many times will the contents of this inner loop run?
+
+ The condition that is evaluated within these brackets is that while PWMperiod is not 0, and it equals TONLEd4 the LED4 will light up. 
+ Then, it will run until the while loop ends with the "--" ends. Again, if the button is held, the conditions will restart and continue.
  * 
  * 3. What condition is being evaluated by the if statement inside the loop?
  *    What happens when the if condition is true?
+
+ The condition that is being evaluated by the if statement inside the loop is that if TONLED4(the variable that allows the LED brightness to either decrease or increase) equals the PWMperiod,
+ (the variable that creates the cycle of the continous decreasing or increasing pattern of the LED's). Then, LED4 will light up.
  * 
  * 4. Pressing the up or down buttons (SW3 and SW2) will increase or decrease
  *    the brightness of LED D4 using PWM (Pulse-Width Modulation). How many 
@@ -109,6 +127,10 @@ int main(void)
         LED4 = 0;
         
  *    What is an advantage of using a for loop instead of a while loop?
+
+ The advantage of a for loop is that it is much more readable and simpler to understand. Additionally, it is less difficult to become stuck in an infinte loop.
+ Comparing the while loop for this code, when I wanted to either increase or decrease the brightness, it always reset the LED and did the task. 
+ However, with the for loop I can incease or decrease whenever I want and the LED only resets when it reaches the max or minimum brightness.
  * 
  * 6. The 'for' loop, above, redefines the PWMperiod variable in the 
  *    initialization statement: 'for(unsigned char PWMperiod = 255; ...'
@@ -137,6 +159,8 @@ int main(void)
  *    Compile and run the code. When the program runs, the PWMperiod variable
  *    inside the for loop will count down from 255 to 0, and should be 0 when
  *    the loop finishes. Is LED D5 lit? What must the value of PWMperiod be?
+
+ LED D5 is lit, which means the value of PWmperiod must be 128 since if it is not the LED would turn off.
  * 
  *    Can you remove the global PWMperiod variable definition from the top of 
  *    the program now that PWMperiod is being defined in the for loop?
