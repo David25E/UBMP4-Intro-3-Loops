@@ -63,6 +63,26 @@ int main(void)
         {
             LED5 = 0;
         }
+
+        // Change pitch
+/*        if(SW4 == 0)
+        {
+            period -= 1;
+        }
+        
+        if(SW5 == 0)
+        {
+            period += 1;
+        }
+        
+        // Make a tone
+        for(unsigned char cycles = 50; cycles != 0; cycles--)
+        {
+            BEEPER = !BEEPER;
+            for(unsigned int p = period; p != 0; p--);
+        }
+/* */
+        
         
         // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
@@ -98,6 +118,8 @@ int main(void)
  *    the brightness of LED D4 using PWM (Pulse-Width Modulation). How many 
  *    different brightnesses can the LED have? What would the step size of one
  *    brightness level change be if it was expressed as a percentage?
+
+ The LED can have
  * 
  * 5. The while loop needs three statements to perform its function. First, the
  *    assignment statement 'PWMperiod = 255;' sets the PWMperiod variable. Next,
@@ -164,6 +186,9 @@ int main(void)
  * 
  *    Can you remove the global PWMperiod variable definition from the top of 
  *    the program now that PWMperiod is being defined in the for loop?
+
+ No, I can not remove the global PWMperiod from the variable definition because the PWMperiod being defined in the for loop is local for the evaluation. 
+ Thus, it is still needed because it is also being used outside of the for loop.
  * 
  * 7. Add this code below the PWM loop to generate a tone:
                 
@@ -194,9 +219,15 @@ int main(void)
  *    to zero, increasing the time delay until the next cycle.
  * 
  *    What variable type is period? How large a number can this variable hold?
+
+ Period is an integer variable, so it can hold a number up to 255.
  * 
  * 8. Why is period copied to the local variable p inside the inner for loop?
  *    What would happen if the actual period variable was decremented instead?
+
+ Period is copied to the local variable p inside the inner loop to be able to increase and decrease the tone of the pitch. 
+ It creates its own period variable to be able to change the value. If the actual period variable was decremented instead we would not be able to increase or decrease the tone. 
+ When SW4 is pressed, it would stop the pitch and rapidly flash LED4 on beat with a rapidly beeping noise.
  * 
  * Programming Activities
  * 
