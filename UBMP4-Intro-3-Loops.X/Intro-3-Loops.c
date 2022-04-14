@@ -20,6 +20,7 @@
 
 // Program variable definitions
 unsigned char TonLED4 = 127;    // LED brightness PWM value
+unsigned char TonLED5 = 127;
 unsigned char PWMperiod;        // PWM period counter for PWM loops
 unsigned int period = 460;      // Sound period value for later activities
 
@@ -30,60 +31,10 @@ int main(void)
 	
     while(1)
 	{
-        // Decrease brightness
-        if(SW2 == 0)
-        {
-            TonLED4 -= 1;
-        }
-
-        // Increase brightness
-        if(SW3 == 0)
-        {
-            TonLED4 += 1;
-        }
         
-        // PWM LED4 brightness
-        PWMperiod = 128;
+ 
         
-        for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
-        {
-            if(TonLED4 == PWMperiod)
-            {
-                LED4 = 1;
-            }
-            __delay_us(20);
-        }
-        LED4 = 0;
-
-        if(PWMperiod == 128)
-        {
-            LED5 = 1;
-        }
-        else
-        {
-            LED5 = 0;
-        }
-
-        // Change pitch
-/*        if(SW4 == 0)
-        {
-            period -= 1;
-        }
-        
-        if(SW5 == 0)
-        {
-            period += 1;
-        }
-        
-        // Make a tone
-        for(unsigned char cycles = 50; cycles != 0; cycles--)
-        {
-            BEEPER = !BEEPER;
-            for(unsigned int p = period; p != 0; p--);
-        }
-/* */
-        
-        
+    
         // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
         {
@@ -119,7 +70,7 @@ int main(void)
  *    different brightnesses can the LED have? What would the step size of one
  *    brightness level change be if it was expressed as a percentage?
 
- The LED can have
+ The LED can have 10 different brightness levels. Therefore, a brightness level change expressed as a step size would be 10%. 100/10=10
  * 
  * 5. The while loop needs three statements to perform its function. First, the
  *    assignment statement 'PWMperiod = 255;' sets the PWMperiod variable. Next,
@@ -244,6 +195,52 @@ int main(void)
  *    have access to an oscilloscope. If not, just light the other two LEDs and 
  *    compare the brightness of LEDs D4 and D5 to them.
  * 
+         //testing LED's for comparison
+        LED3 = 1;
+        LED6 = 1;
+       // Decrease brightness
+       if(SW2 == 0)
+       {
+           TonLED4 -= 1;
+       }
+ 
+       // Increase brightness
+       if(SW3 == 0)
+       {
+           TonLED4 += 1;
+       }
+
+       // Decrease brightness
+       if(SW5 == 0)
+       {
+           TonLED5 -= 1;
+       }
+ 
+       // Increase brightness
+       if(SW4 == 0)
+       {
+           TonLED5 += 1;
+       }
+      
+       // PWM LED4 brightness
+       PWMperiod = 128;
+      
+       for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
+       {
+           if(TonLED4 == PWMperiod)
+           {
+               LED4 = 1;
+           }
+           __delay_us(20);
+           
+           if(TonLED5 == PWMperiod)
+           {
+               LED5 = 1;
+           }
+           __delay_us(20);
+       }
+       LED4 = 0;
+       LED5 = 0;
  * 3. Rather than having lights suddenly turn on at full brightness, or motors
  *    turn on at full power, create a program that uses a for loop and your PWM
  *    code to make a 'soft-start' program that slowly increases the PWM on-time
@@ -254,4 +251,16 @@ int main(void)
  * 
  * 5. Make a 'chirp' or 'pew-pew' sound effect by sweeping through a range of
  *    frequencies when a button is pressed.
+
+ // Make a tone
+        if(SW2 == 0){
+        for(unsigned char cycles = 50; cycles != 0; cycles--)
+        {
+           BEEPER = !BEEPER;
+            __delay_us(75);
+            __delay_us(100);
+            for(unsigned int p = period; p != 0; p += 20);
+        }
+        }
+        BEEPER = 0;
  */
