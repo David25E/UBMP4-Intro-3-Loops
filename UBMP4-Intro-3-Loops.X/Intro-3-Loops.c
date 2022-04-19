@@ -187,6 +187,45 @@ int main(void)
  *    holding SW2 will dim the LED until it is off and then keep if off, and
  *    pressing and holding SW3 will brighten the LED and keep it at maximum
  *    brightness.
+
+ 
+        // Decrease brightness
+        if(SW2 == 0)
+        {
+            TonLED4 -= 1;
+        }
+
+        
+        // PWM LED4 brightness
+        PWMperiod = 255;
+        while(PWMperiod != 0)
+        {
+            if(TonLED4 == PWMperiod)
+            {
+                LED4 = 1;
+            }
+            PWMperiod --;
+            __delay_us(20);
+        }
+        LED4 = 0;
+
+        //increase the brightness
+        if(SW3 == 0){
+
+            TonLED4 += 1;
+        }
+        // PWM LED4 brightness
+        PWMperiod = 255;
+        while(PWMperiod != 0)
+        {
+            if(TonLED4 == PWMperiod)
+            {
+                LED4 = 1;
+            }
+            PWMperiod ++;
+            __delay_us(20);
+        }
+        LED4 = 1;
  * 
  * 2. Modify your program to control the brightness of LED D5 using SW4 and SW5
  *    while using SW3 and SW2 to control LED D4. Hint: To ensure each LED can
@@ -245,9 +284,24 @@ int main(void)
  *    turn on at full power, create a program that uses a for loop and your PWM
  *    code to make a 'soft-start' program that slowly increases the PWM on-time
  *    when you press a button. Can you make it turn off in a similar way?
+
+    for(unsigned char cycles = 50; cycles != 0; cycles--)
  * 
  * 4. Make a program that creates an automated, electronic 'pulse', repeatedly
  *    brightening and dimming one or more LEDs.
+
+    for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --){
+        LED4 = 1;
+        TONLED4 -= 1;
+        if(TONLED4 == 3 ){
+            TONLED4 += 1;
+        }
+        if(TONLED4 == 251){
+            TONLED4 -= 1;
+
+        }    
+    }
+ 
  * 
  * 5. Make a 'chirp' or 'pew-pew' sound effect by sweeping through a range of
  *    frequencies when a button is pressed.
