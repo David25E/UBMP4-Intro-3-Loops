@@ -32,15 +32,27 @@ int main(void)
     while(1)
 	{
         
- 
+// Make a tone
+        if(SW2 == 0){
+        for(unsigned char cycles = 50; cycles != 0; cycles--)
+        {
+           cycles -= 5;
+           BEEPER = !BEEPER;
+            __delay_us(230);
+            __delay_us(460);
+           
+        }
+            __delay_ms(300);
+        }
+        LED4 = 0;
         
-    
+          
         // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
         {
             RESET();
         }
-    }
+}   
 }
 
 /* Program Analysis
@@ -188,14 +200,11 @@ int main(void)
  *    pressing and holding SW3 will brighten the LED and keep it at maximum
  *    brightness.
 
- 
-        // Decrease brightness
-        if(SW2 == 0)
+if(SW2 == 0)
         {
             TonLED4 -= 1;
         }
 
-        
         // PWM LED4 brightness
         PWMperiod = 255;
         while(PWMperiod != 0)
@@ -225,7 +234,13 @@ int main(void)
             PWMperiod ++;
             __delay_us(20);
         }
-        LED4 = 1;
+        LED4 = 0; 
+        if(PWMperiod == 1 && TonLED4 == 1){
+                LED4= 0;
+            }
+        if(PWMperiod == 254 && TonLED4 == 254){
+                LED4 = 1;
+            }
  * 
  * 2. Modify your program to control the brightness of LED D5 using SW4 and SW5
  *    while using SW3 and SW2 to control LED D4. Hint: To ensure each LED can
