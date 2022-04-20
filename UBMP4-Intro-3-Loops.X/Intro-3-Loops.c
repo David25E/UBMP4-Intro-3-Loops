@@ -23,7 +23,6 @@ unsigned char TonLED4 = 127;    // LED brightness PWM value
 unsigned char TonLED5 = 127;
 unsigned char PWMperiod;        // PWM period counter for PWM loops
 unsigned int period = 460;      // Sound period value for later activities
-
 int main(void)
 {
     OSC_config();               // Configure internal oscillator for 48 MHz
@@ -31,28 +30,25 @@ int main(void)
 	
     while(1)
 	{
-        
-// Make a tone
         if(SW2 == 0){
-        for(unsigned char cycles = 50; cycles != 0; cycles--)
-        {
-           cycles -= 5;
-           BEEPER = !BEEPER;
-            __delay_us(230);
-            __delay_us(460);
-           
+            BEEPER = !BEEPER;
+            __delay_us(100);
+            
+            __delay_ms(400);
+
+            BEEPER = !BEEPER;
+
         }
-            __delay_ms(300);
-        }
-        LED4 = 0;
         
-          
+        
+        
+
         // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
         {
             RESET();
         }
-}   
+    }   
 }
 
 /* Program Analysis
@@ -200,47 +196,33 @@ int main(void)
  *    pressing and holding SW3 will brighten the LED and keep it at maximum
  *    brightness.
 
-if(SW2 == 0)
+        // Decrease brightness
+        if(SW2 == 0 && TonLED4 > 0)          // added TonLED4 > 0 
         {
             TonLED4 -= 1;
+
         }
 
+        // Increase brightness
+        if(SW3 == 0 && TonLED4 < 255)        // added TonLED4 < 255
+        {
+            TonLED4 += 1;
+    
+        }
+        
         // PWM LED4 brightness
-        PWMperiod = 255;
-        while(PWMperiod != 0)
+        for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
         {
             if(TonLED4 == PWMperiod)
             {
                 LED4 = 1;
             }
-            PWMperiod --;
+            if(PWMperiod == 1){
+                LED4 = 0;
+            }
             __delay_us(20);
         }
         LED4 = 0;
-
-        //increase the brightness
-        if(SW3 == 0){
-
-            TonLED4 += 1;
-        }
-        // PWM LED4 brightness
-        PWMperiod = 255;
-        while(PWMperiod != 0)
-        {
-            if(TonLED4 == PWMperiod)
-            {
-                LED4 = 1;
-            }
-            PWMperiod ++;
-            __delay_us(20);
-        }
-        LED4 = 0; 
-        if(PWMperiod == 1 && TonLED4 == 1){
-                LED4= 0;
-            }
-        if(PWMperiod == 254 && TonLED4 == 254){
-                LED4 = 1;
-            }
  * 
  * 2. Modify your program to control the brightness of LED D5 using SW4 and SW5
  *    while using SW3 and SW2 to control LED D4. Hint: To ensure each LED can
@@ -300,23 +282,38 @@ if(SW2 == 0)
  *    code to make a 'soft-start' program that slowly increases the PWM on-time
  *    when you press a button. Can you make it turn off in a similar way?
 
-    for(unsigned char cycles = 50; cycles != 0; cycles--)
+        for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
+        {
+            if(TonLED4 == PWMperiod && SW2 == 0)
+            {
+                LED4 = 1;
+                TonLED4 += 0.25; 
+            }
+            if(PWMperiod == 1){
+                LED4 = 0;
+            }
+            __delay_us(20);
+        }
+        LED4 = 0;
+
+    I can turn it off in a similar way by doing the opposite, which is by "soft-ending" that slowly dims the lighting.
  * 
  * 4. Make a program that creates an automated, electronic 'pulse', repeatedly
  *    brightening and dimming one or more LEDs.
-
-    for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --){
-        LED4 = 1;
-        TONLED4 -= 1;
-        if(TONLED4 == 3 ){
-            TONLED4 += 1;
+        
+        // PWM LED4 brightness
+        for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
+        {
+            if(TonLED4 == PWMperiod)
+            {
+                LED4 = 1;
+            }
+            if(PWMperiod == 1){
+                LED4 = 0;
+            }
+            __delay_us(20);
         }
-        if(TONLED4 == 251){
-            TONLED4 -= 1;
-
-        }    
-    }
- 
+        LED4 = 0;
  * 
  * 5. Make a 'chirp' or 'pew-pew' sound effect by sweeping through a range of
  *    frequencies when a button is pressed.
@@ -332,4 +329,10 @@ if(SW2 == 0)
         }
         }
         BEEPER = 0;
+
+         if(SW2 == 0){
+           BEEPER =! BEEPER;
+           tone(BEEPER, 300, 50);
+
+        }
  */
