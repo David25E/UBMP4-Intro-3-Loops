@@ -20,29 +20,42 @@
 
 // Program variable definitions
 unsigned char TonLED4 = 127;    // LED brightness PWM value
-unsigned char TonLED5 = 127;
 unsigned char PWMperiod;        // PWM period counter for PWM loops
 unsigned int period = 460;      // Sound period value for later activities
+
 int main(void)
 {
     OSC_config();               // Configure internal oscillator for 48 MHz
     UBMP4_config();             // Configure on-board UBMP4 I/O devices
-	
+    
+    
     while(1)
 	{
-        if(SW2 == 0){
-            BEEPER = !BEEPER;
-            __delay_us(100);
-            
-            __delay_ms(400);
+       // Decrease brightness
+        if(SW2 == 0)
+        {
+            TonLED4 -= 1;
+        }
 
-            BEEPER = !BEEPER;
-
+        // Increase brightness
+        if(SW3 == 0)
+        {
+            TonLED4 += 1;
         }
         
+        // PWM LED4 brightness
+        for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
+        {
+            if(TonLED4 == PWMperiod)
+            {
+                LED4 = 1;
+            }
+            __delay_us(20);
+        }
+        LED4 = 0; 
+                
+    
         
-        
-
         // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
         {
@@ -57,21 +70,21 @@ int main(void)
  *    is being evaluated within its brackets? (Hint: Think about the Boolean
  *    variables from Activity 2-Variables.) How many times will this loop run?
 
- The condition that is being evaluated within its brackets is either if the LED4 brightness will increase or decrease. This will run as many times as the user would like it to run for.
- However, it will restart and either decrease or increase as it hits the reset limit, which is the PWMperiod.
+ The condition that is being evaluated within its brackets is the number of times/how long the while loop will run for. In this case, the 1 will cause it to run forever.
  * 
  * 2. There is a second 'while(PWMperiod != 0)' loop inside the first while
  *    loop. What condition is being evaluated inside this while statement's
  *    brackets? How many times will the contents of this inner loop run?
 
- The condition that is evaluated within these brackets is that while PWMperiod is not 0, and it equals TONLEd4 the LED4 will light up. 
- Then, it will run until the while loop ends with the "--" ends. Again, if the button is held, the conditions will restart and continue.
+ The condition that is evaluated within these brackets is that while PWMperiod is not 0, it will run the assigned code within its brackets.
+ If the button is held, the conditions will restart and continue.
  * 
  * 3. What condition is being evaluated by the if statement inside the loop?
  *    What happens when the if condition is true?
 
- The condition that is being evaluated by the if statement inside the loop is that if TONLED4(the variable that allows the LED brightness to either decrease or increase) equals the PWMperiod,
- (the variable that creates the cycle of the continous decreasing or increasing pattern of the LED's). Then, LED4 will light up.
+ The condition that is being evaluated by the if statement inside the loop is that if TonLED4(the variable that allows the LED brightness to either decrease or increase) equals the PWMperiod,
+ (the variable that creates the cycle of the continous decreasing or increasing pattern of the LED's), LED4 will light up. These are the contents of the code that are required to lighting and adjusting the brightness of the LED.
+ Later, if the statement is false the line "PWMperiod --" ends/does not allow the code to run.
  * 
  * 4. Pressing the up or down buttons (SW3 and SW2) will increase or decrease
  *    the brightness of LED D4 using PWM (Pulse-Width Modulation). How many 
@@ -111,7 +124,7 @@ int main(void)
 
  The advantage of a for loop is that it is much more readable and simpler to understand. Additionally, it is less difficult to become stuck in an infinte loop.
  Comparing the while loop for this code, when I wanted to either increase or decrease the brightness, it always reset the LED and did the task. 
- However, with the for loop I can incease or decrease whenever I want and the LED only resets when it reaches the max or minimum brightness.
+ However, with the for loop I can increase or decrease whenever I want and the LED only resets when it reaches the max or minimum brightness.
  * 
  * 6. The 'for' loop, above, redefines the PWMperiod variable in the 
  *    initialization statement: 'for(unsigned char PWMperiod = 255; ...'
@@ -318,21 +331,98 @@ int main(void)
  * 5. Make a 'chirp' or 'pew-pew' sound effect by sweeping through a range of
  *    frequencies when a button is pressed.
 
- // Make a tone
-        if(SW2 == 0){
-        for(unsigned char cycles = 50; cycles != 0; cycles--)
+ void makeSound(int cycles, long delay){
+    for (unsigned int c = 0; c < cycles; c++)
+    {
+            BEEPER = !BEEPER;
+        unsigned long n = delay;
+        for (unsigned long p = 0; p < n; p++)
+            ;
+    }
+}
+
+if(SW2 == 0){
+           makeSound(cycles, delay);
+           
+       } 
+       if(SW3 == 0){
+           delay --;
+       }
+       if(SW4 == 0){
+           delay ++;
+       }
+       if(SW5 == 0){
+           delay = 200;
+       }
+
+       void decliningPitch(){
+    unsigned int lowerParabola(unsigned int initialHeight, unsigned int vertex, unsigned int difference1)
         {
-           BEEPER = !BEEPER;
-            __delay_us(75);
-            __delay_us(100);
-            for(unsigned int p = period; p != 0; p += 20);
+            difference1 = intialHeight - vertex
+            return(difference1)
         }
+}   
+void risingPitch(){
+    unsigned int riseParabola(unsigned int initialHeight, unsigned int vertex, unsigned int difference2)
+        {
+            difference2 = vertex * 2
+            return(difference2)
         }
-        BEEPER = 0;
+}
+ 
+ //my own attempts
+ unsigned int initialHeight = 500;
+unsigned int vertex = 250;
+       
+            unsigned int lowerParabola(unsigned int initialHeight, unsigned int vertex, unsigned int difference1)
+                {
+                    difference1 = initialHeight - vertex;
+                    return(difference1);
+                }
+   
+        
+            unsigned int riseParabola(unsigned int initialHeight, unsigned int vertex, unsigned int difference2)
+                {
+                    difference2 = vertex * 2;
+                    return(difference2);
+                }
 
-         if(SW2 == 0){
-           BEEPER =! BEEPER;
-           tone(BEEPER, 300, 50);
+                void makeSound(int cycles,  unsigned long delay, unsigned int lowerParabola, int riseParabola){
+    for (unsigned int c = 0; c < cycles; c++)
+    {
+            BEEPER = !BEEPER;
+        unsigned long n = delay;
+        for (unsigned long p = 0; p < n; p++)
+            ;
+        unsigned int lp = lowerParabola;
+        for(unsigned long p = 0; p < lp; lp --);
 
-        }
+        int rp = riseParabola;
+        for(unsigned long p = 0; p < rp; n ++);
+    }
+}
+ 
+ 
+ int cycles = 100;
+    unsigned long delay = 200;
+    int riseParabola;
+    unsigned int lowerParabola;
+    
+    
+    while(1)
+	{
+       if(SW2 == 0){
+           makeSound(cycles, delay, lowerParabola, riseParabola);  
+       } 
+       if(SW3 == 0){
+           delay --;
+       }
+       if(SW4 == 0){
+           delay ++;
+       }
+       if(SW5 == 0){
+           delay = 200;
+       }
+ 
+ 
  */
