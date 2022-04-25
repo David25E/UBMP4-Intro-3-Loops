@@ -33,18 +33,6 @@ int main(void)
     while(1)
     {
    
-        // PWM LED4 brightness
-        PWMperiod = 255;
-        while(PWMperiod != 0)
-        {
-            if(TonLED4 == PWMperiod)
-            {
-                LED4 = 1;
-            }
-            PWMperiod --;
-            __delay_us(20);
-        }
-        LED4 = 0;
 
         // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
@@ -280,7 +268,7 @@ The board can have 256 different brightnesses, which is the step size. As a perc
  *    code to make a 'soft-start' program that slowly increases the PWM on-time
  *    when you press a button. Can you make it turn off in a similar way?
         
- if(SW2 == 0){
+        if(SW2 == 0){                 //increases the brightening speed after a certain number is reached
             TonLED4 += 1;
             if(TonLED4 > 300){
             TonLED4 += 2;
@@ -313,7 +301,7 @@ The board can have 256 different brightnesses, which is the step size. As a perc
  * 4. Make a program that creates an automated, electronic 'pulse', repeatedly
  *    brightening and dimming one or more LEDs.
     if(SW4 == 0){
-       for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
+       for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)    //Loop that turns on the LED's
        {
            if(TonLED4 && TonLED5 > PWMperiod)
            {
@@ -325,7 +313,7 @@ The board can have 256 different brightnesses, which is the step size. As a perc
            __delay_us(200);
        }
        __delay_ms(50);
-       for(unsigned char PWMperiod = 0; PWMperiod != 254; PWMperiod ++)
+       for(unsigned char PWMperiod = 0; PWMperiod != 254; PWMperiod ++)    //Loop that turns off the LED's
        {
            if(TonLED4 && TonLED5 < PWMperiod)
            {
@@ -342,7 +330,7 @@ The board can have 256 different brightnesses, which is the step size. As a perc
  * 5. Make a 'chirp' or 'pew-pew' sound effect by sweeping through a range of
  *    frequencies when a button is pressed.
  void makeSound(int cycles, long delay){
-    for (unsigned int c = 0; c < cycles; c++)
+    for (unsigned int c = 0; c < cycles; c++)       //inital function to create sounds
     {
             BEEPER = !BEEPER;
         unsigned long n = delay;
@@ -354,7 +342,7 @@ The board can have 256 different brightnesses, which is the step size. As a perc
 int cycles = 100;
 long delay = 200;
 
-        if(SW2 == 0){
+        if(SW2 == 0){                 //Makes sound
         makeSound(cycles, delay);    
        }
        if(SW3 == 0){
@@ -363,7 +351,7 @@ long delay = 200;
        if(SW4 == 0){
            delay ++;
        }
-       if(SW5 == 0){
+       if(SW5 == 0){                 //reset pitch
            delay = 200;
        }
  */
