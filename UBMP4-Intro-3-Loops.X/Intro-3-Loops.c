@@ -20,6 +20,7 @@
  
 // Program variable definitions
 unsigned char TonLED4 = 127;    // LED brightness PWM value
+unsigned char TonLED5 = 127;
 unsigned char PWMperiod;        // PWM period counter for PWM loops
 unsigned int period = 460;      // Sound period value for later activities
  
@@ -31,9 +32,20 @@ int main(void)
    
     while(1)
     {
-       
-            
-        
+   
+        // PWM LED4 brightness
+        PWMperiod = 255;
+        while(PWMperiod != 0)
+        {
+            if(TonLED4 == PWMperiod)
+            {
+                LED4 = 1;
+            }
+            PWMperiod --;
+            __delay_us(20);
+        }
+        LED4 = 0;
+
         // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
         {
@@ -56,14 +68,15 @@ int main(void)
  *    brackets? How many times will the contents of this inner loop run?
  
  The condition that is evaluated within these brackets is that while PWMperiod is not 0, it will run the assigned code within its brackets.
- If the button is held, the conditions will restart and continue.
+ It will run forever unless PWMperiod is changed to 0.
  *
  * 3. What condition is being evaluated by the if statement inside the loop?
  *    What happens when the if condition is true?
  
  The condition that is being evaluated by the if statement inside the loop is that if TonLED4(the variable that allows the LED brightness to either decrease or increase) equals the PWMperiod,
- (the variable that creates the cycle of the continous decreasing or increasing pattern of the LED's), LED4 will light up. These are the contents of the code that are required to lighting and adjusting the brightness of the LED.
- Later, if the statement is false the line "PWMperiod --" ends/does not allow the code to run.
+ (the variable that creates the cycle of the continous decreasing or increasing pattern of the LED's), LED4 will light up. 
+ These are the contents of the code that are required to light up and adjust the brightness of the LED.
+ Later, if the statement is false, the line "PWMperiod --" restarts the loop.
  *
  * 4. Pressing the up or down buttons (SW3 and SW2) will increase or decrease
  *    the brightness of LED D4 using PWM (Pulse-Width Modulation). How many
@@ -102,6 +115,7 @@ The board can have 256 different brightnesses, which is the step size. As a perc
  *    What is an advantage of using a for loop instead of a while loop?
  
  The advantage of a for loop is that it is much more readable and simpler to understand. Additionally, it is less difficult to become stuck in an infinte loop.
+ It contains the three parts of a loop in its first evaluation, which makes it easier to debug and change the assigned code inside.
  
  * 6. The 'for' loop, above, redefines the PWMperiod variable in the
  *    initialization statement: 'for(unsigned char PWMperiod = 255; ...'
@@ -135,7 +149,7 @@ The board can have 256 different brightnesses, which is the step size. As a perc
  *    Can you remove the global PWMperiod variable definition from the top of
  *    the program now that PWMperiod is being defined in the for loop?
  
- No, I can not remove the global PWMperiod from the variable definition because the PWMperiod being is also being used outside of the for loop.
+ No, I can not remove the global PWMperiod from the variable definition because the PWMperiod is also being used outside of the for loop.
  Thus, it is still needed.
  *
  * 7. Add this code below the PWM loop to generate a tone:
@@ -173,8 +187,8 @@ The board can have 256 different brightnesses, which is the step size. As a perc
  *    What would happen if the actual period variable was decremented instead?
  
  Period is copied to the local variable p inside the inner loop to be able to increase and decrease the delay of the first loop.
- If the actual period variable was decremented instead, the delay would not work because the loop would be terminated and cancel out.
- 
+ If the actual period variable was decremented instead, the delay would not work because you would not be able to change the pitch of the beeper. 
+ If it is period = 460, the beeper is simply producing a single pitched tone. Plus, if it is simply "period" in the for loop, there is no sound produced unless SW4 is pressed.
  *
  * Programming Activities
  *
@@ -216,7 +230,7 @@ The board can have 256 different brightnesses, which is the step size. As a perc
  *    have access to an oscilloscope. If not, just light the other two LEDs and
  *    compare the brightness of LEDs D4 and D5 to them.
  *
-         //testing LED's for comparison
+         //testing LED's for brightness comparison
         LED3 = 1;
         LED6 = 1;
        // Decrease brightness
@@ -294,50 +308,36 @@ The board can have 256 different brightnesses, which is the step size. As a perc
         LED4 = 0;
 
     I can turn it off in a similar way by doing the opposite, which is by slowly dimming the LED after the brightening phase reaches a certain point. 
-    Basically another for loop that accomplishes the opposite.
+    Potentially a for loop that accomplishes the opposite.
  *
  * 4. Make a program that creates an automated, electronic 'pulse', repeatedly
  *    brightening and dimming one or more LEDs.
-        if(SW4 == 0){
+    if(SW4 == 0){
        for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
        {
-           if(TonLED4 > PWMperiod)
+           if(TonLED4 && TonLED5 > PWMperiod)
            {
                LED4 = 1;
                TonLED4 -= 1;
+               LED5 = 1;
+               TonLED5 -= 1;
            }
-           __delay_us(20);
+           __delay_us(200);
        }
+       __delay_ms(50);
        for(unsigned char PWMperiod = 0; PWMperiod != 254; PWMperiod ++)
        {
-           if(TonLED4 < PWMperiod)
+           if(TonLED4 && TonLED5 < PWMperiod)
            {
                LED4 = 0;
                TonLED4 += 1;
+               LED5 = 0;
+               TonLED5 += 1;
 
            }
-           __delay_us(20);
+           __delay_us(200);
+        }
        }
-       }
-       if(SW4 == 0){
-        unsigned char PWMperiod = 255;
-        for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
-        {
-            if(TonLED4 == PWMperiod)
-            {
-                LED4 = 1;
-            }
-            __delay_us(20);
-        if(PWMperiod == 254){
-            TonLED4 -= 1;
-        }
-        if(PWMperiod == 1){
-            TonLED4 += 1;
-        }
-        }
-
-        
-        }
  *
  * 5. Make a 'chirp' or 'pew-pew' sound effect by sweeping through a range of
  *    frequencies when a button is pressed.
@@ -350,9 +350,12 @@ The board can have 256 different brightnesses, which is the step size. As a perc
             ;
     }
 }
-if(SW2 == 0){
-           makeSound(cycles, delay);
-           
+
+int cycles = 100;
+long delay = 200;
+
+        if(SW2 == 0){
+        makeSound(cycles, delay);    
        }
        if(SW3 == 0){
            delay --;
@@ -363,73 +366,5 @@ if(SW2 == 0){
        if(SW5 == 0){
            delay = 200;
        }
-       void decliningPitch(){
-    unsigned int lowerParabola(unsigned int initialHeight, unsigned int vertex, unsigned int difference1)
-        {
-            difference1 = intialHeight - vertex
-            return(difference1)
-        }
-}  
-void risingPitch(){
-    unsigned int riseParabola(unsigned int initialHeight, unsigned int vertex, unsigned int difference2)
-        {
-            difference2 = vertex * 2
-            return(difference2)
-        }
-}
- 
- //my own attempts
- unsigned int initialHeight = 500;
-unsigned int vertex = 250;
-       
-            unsigned int lowerParabola(unsigned int initialHeight, unsigned int vertex, unsigned int difference1)
-                {
-                    difference1 = initialHeight - vertex;
-                    return(difference1);
-                }
-   
-       
-            unsigned int riseParabola(unsigned int initialHeight, unsigned int vertex, unsigned int difference2)
-                {
-                    difference2 = vertex * 2;
-                    return(difference2);
-                }
-                void makeSound(int cycles,  unsigned long delay, unsigned int lowerParabola, int riseParabola){
-    for (unsigned int c = 0; c < cycles; c++)
-    {
-            BEEPER = !BEEPER;
-        unsigned long n = delay;
-        for (unsigned long p = 0; p < n; p++)
-            ;
-        unsigned int lp = lowerParabola;
-        for(unsigned long p = 0; p < lp; lp --);
-        int rp = riseParabola;
-        for(unsigned long p = 0; p < rp; n ++);
-    }
-}
- 
- 
- int cycles = 100;
-    unsigned long delay = 200;
-    int riseParabola;
-    unsigned int lowerParabola;
-   
-   
-    while(1)
-    {
-       if(SW2 == 0){
-           makeSound(cycles, delay, lowerParabola, riseParabola);  
-       }
-       if(SW3 == 0){
-           delay --;
-       }
-       if(SW4 == 0){
-           delay ++;
-       }
-       if(SW5 == 0){
-           delay = 200;
-       }
- 
- 
  */
 
