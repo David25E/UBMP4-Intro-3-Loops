@@ -32,7 +32,51 @@ int main(void)
    
     while(1)
     {
-   
+        //testing LED's for brightness comparison
+        LED3 = 1;
+        LED6 = 1;
+       // Decrease brightness
+       if(SW2 == 0)
+       {
+           TonLED4 -= 1;
+       }
+ 
+       // Increase brightness
+       if(SW3 == 0)
+       {
+           TonLED4 += 1;
+       }
+       // Decrease brightness
+       if(SW5 == 0)
+       {
+           TonLED5 -= 1;
+       }
+ 
+       // Increase brightness
+       if(SW4 == 0)
+       {
+           TonLED5 += 1;
+       }
+     
+       // PWM LED4 brightness
+       PWMperiod = 128;
+     
+       for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
+       {
+           if(TonLED4 == PWMperiod)
+           {
+               LED4 = 1;
+           }
+           __delay_us(20);
+           
+           if(TonLED5 == PWMperiod)
+           {
+               LED5 = 1;
+           }
+           __delay_us(20);
+       }
+       LED4 = 0;
+       LED5 = 0;
 
         // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
@@ -102,8 +146,8 @@ The board can have 256 different brightnesses, which is the step size. As a perc
        
  *    What is an advantage of using a for loop instead of a while loop?
  
- The advantage of a for loop is that it is much more readable and simpler to understand. Additionally, it is less difficult to become stuck in an infinte loop.
- It contains the three parts of a loop in its first evaluation, which makes it easier to debug and change the assigned code inside.
+ An advantage for using a for loop is if you know how many cycles/loops you wish to do, because it can be more convinent than a while loop being dynamic.
+ This is because the user determines the looping and stoppage of the while loop by what occurs. For example, in a program, a while loop can run until a different feature is used.
  
  * 6. The 'for' loop, above, redefines the PWMperiod variable in the
  *    initialization statement: 'for(unsigned char PWMperiod = 255; ...'
@@ -169,7 +213,7 @@ The board can have 256 different brightnesses, which is the step size. As a perc
  *
  *    What variable type is period? How large a number can this variable hold?
  
- Period is an integer variable, so it can hold a number up to 255.
+ Period is an unsigned integer variable, so it can only deal/work with positive integers from 0 to 2^16(65 536).
  *
  * 8. Why is period copied to the local variable p inside the inner for loop?
  *    What would happen if the actual period variable was decremented instead?
@@ -315,7 +359,7 @@ The board can have 256 different brightnesses, which is the step size. As a perc
        __delay_ms(50);
        for(unsigned char PWMperiod = 0; PWMperiod != 254; PWMperiod ++)    //Loop that turns off the LED's
        {
-           if(TonLED4 && TonLED5 < PWMperiod)
+           if(TonLED4 < PWMperiod && TonLED5 < PWMperiod)
            {
                LED4 = 0;
                TonLED4 += 1;
