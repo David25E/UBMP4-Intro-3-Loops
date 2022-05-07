@@ -23,60 +23,18 @@ unsigned char TonLED4 = 127;    // LED brightness PWM value
 unsigned char TonLED5 = 127;
 unsigned char PWMperiod;        // PWM period counter for PWM loops
 unsigned int period = 460;      // Sound period value for later activities
- 
+
+bool SW3pressed = false;
+
+
 int main(void)
 {
     OSC_config();               // Configure internal oscillator for 48 MHz
     UBMP4_config();             // Configure on-board UBMP4 I/O devices
    
-   
     while(1)
     {
-        //testing LED's for brightness comparison
-        LED3 = 1;
-        LED6 = 1;
-       // Decrease brightness
-       if(SW2 == 0)
-       {
-           TonLED4 -= 1;
-       }
- 
-       // Increase brightness
-       if(SW3 == 0)
-       {
-           TonLED4 += 1;
-       }
-       // Decrease brightness
-       if(SW5 == 0)
-       {
-           TonLED5 -= 1;
-       }
- 
-       // Increase brightness
-       if(SW4 == 0)
-       {
-           TonLED5 += 1;
-       }
-     
-       // PWM LED4 brightness
-       PWMperiod = 128;
-     
-       for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
-       {
-           if(TonLED4 == PWMperiod)
-           {
-               LED4 = 1;
-           }
-           __delay_us(20);
-           
-           if(TonLED5 == PWMperiod)
-           {
-               LED5 = 1;
-           }
-           __delay_us(20);
-       }
-       LED4 = 0;
-       LED5 = 0;
+
 
         // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
@@ -218,6 +176,9 @@ The board can have 256 different brightnesses, which is the step size. As a perc
  * 8. Why is period copied to the local variable p inside the inner for loop?
  *    What would happen if the actual period variable was decremented instead?
  
+ The period is copied to the local variable p to allow it to work several times/in a loop, because if the actual period variable was used the beeper would simply run once as the program is run the first time.
+ This is because if the global variable period was used the period variable/part of sound would be diminished.
+ 
  Period is copied to the local variable p inside the inner loop to be able to increase and decrease the delay of the first loop.
  If the actual period variable was decremented instead, the delay would not work because you would not be able to change the pitch of the beeper. 
  If it is period = 460, the beeper is simply producing a single pitched tone. Plus, if it is simply "period" in the for loop, there is no sound produced unless SW4 is pressed.
@@ -262,7 +223,7 @@ The board can have 256 different brightnesses, which is the step size. As a perc
  *    have access to an oscilloscope. If not, just light the other two LEDs and
  *    compare the brightness of LEDs D4 and D5 to them.
  *
-         //testing LED's for brightness comparison
+        //testing LED's for brightness comparison
         LED3 = 1;
         LED6 = 1;
        // Decrease brightness
@@ -297,13 +258,11 @@ The board can have 256 different brightnesses, which is the step size. As a perc
            {
                LED4 = 1;
            }
-           __delay_us(20);
-           
+           __delay_us(20);                    //changed it to simply this one delay to prevent bouncing without delays
            if(TonLED5 == PWMperiod)
            {
                LED5 = 1;
            }
-           __delay_us(20);
        }
        LED4 = 0;
        LED5 = 0;
@@ -311,36 +270,54 @@ The board can have 256 different brightnesses, which is the step size. As a perc
  *    turn on at full power, create a program that uses a for loop and your PWM
  *    code to make a 'soft-start' program that slowly increases the PWM on-time
  *    when you press a button. Can you make it turn off in a similar way?
-        
-        if(SW2 == 0){                 //increases the brightening speed after a certain number is reached
-            TonLED4 += 1;
-            if(TonLED4 > 300){
-            TonLED4 += 2;
-        }
     
-        }
-            for(unsigned char PWMperiod = 510; PWMperiod != 0; PWMperiod --){     //inital loop to help brighten the LED
-                if(TonLED4 == PWMperiod){
-                    LED4 = 1;
-                }
-                __delay_us(20);
-            }
-            LED4 = 0;
-            
-            PWMperiod = 255;                 // this loop helps slow down the brightening of the LED
-            while(PWMperiod != 0)
-            {
-            if(TonLED4 == PWMperiod)
-            {
-                LED4 = 1;
-            }
-            PWMperiod --;
-            __delay_us(20);
-        }
+bool SW3pressed = false;
+
+void turn_led3_on_gradually(){
+    for(unsigned char TonLED4 = 0; TonLED4 < 255; TonLED4 ++){
         LED4 = 0;
+        for(unsigned char PWMperiod = 255; PWMperiod > 0; PWMperiod --){
+            if(TonLED4 == PWMperiod){
+                LED4 = 1;
+                }
+            __delay_us(500);
+        }
+    }
+}
+
+void turn_led3_off_gradually(){
+    for(unsigned char TonLED4 = 255; TonLED4 > 0; TonLED4 --){
+        for(unsigned char PWMperiod = 255; PWMperiod > 0; PWMperiod --){
+            if(TonLED4 == PWMperiod){
+                LED4 = 1;
+                }
+            __delay_us(500);
+        }
+    LED4 = 0;
+    }
+}
+
+int main(void)
+{
+    OSC_config();               // Configure internal oscillator for 48 MHz
+    UBMP4_config();             // Configure on-board UBMP4 I/O devices
+   
+    while(1)
+    {
+        if(SW3 == 0 && SW3pressed == false){
+            turn_led3_on_gradually();
+            SW3pressed = true;
+        }
+        if(SW3 == 0 && SW3pressed == true){
+            turn_led3_off_gradually();
+            SW3pressed = false;
+        }
+
+
 
     I can turn it off in a similar way by doing the opposite, which is by slowly dimming the LED after the brightening phase reaches a certain point. 
     Potentially a for loop that accomplishes the opposite.
+    Or, by using boolean statements. If the incremented variable reaches a certain value, a boolean if statement can turn the LED off.
  *
  * 4. Make a program that creates an automated, electronic 'pulse', repeatedly
  *    brightening and dimming one or more LEDs.
